@@ -1,13 +1,14 @@
+import datetime
 from pydantic import BaseModel,Field
 from typing import List
-from datetime import date
+from datetime import datetime
 
 class Employee(BaseModel):
     employee_id: str=Field(...,description="Unique identifier for employee")
     name: str=Field(...,description="Employee's full name")
     department: str=Field(...,description="Department name")
     salary: float=Field(...,description="Annual salary")
-    joining_date: date=Field(...,description="ISO date when joined")
+    joining_date: datetime=Field(...,description="ISO date when joined")
     skills: List[str]=Field(...,description="List of skills")
         
     class Config:

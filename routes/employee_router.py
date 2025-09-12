@@ -1,7 +1,7 @@
-from fastapi import APIRouter,Path,Body
+from fastapi import APIRouter,Path,Body, Query
 from models import Employee
-from typing import Dict
-from controllers.employee_controller import create_employee, delete_employee, get_employee, update_employee
+from typing import Dict, List
+from controllers.employee_controller import create_employee, delete_employee, get_avg_salary_by_department, get_employee, get_employees_by_department, search_employees_by_skill, update_employee
 
 router=APIRouter(prefix="/employees")
 
@@ -30,3 +30,15 @@ async def update_employee_endpoint(
 @router.delete("/{employee_id}")
 async def delete_employee_endpoint(employee_id: str = Path(..., description="Employee's unique ID")):
     return await delete_employee(employee_id)
+
+@router.get("/", response_model=List[Employee])
+async def list_employees_by_department(department: str = Query(..., description="Department name to filter by")):
+    return await get_employees_by_department(department)
+
+@router.get("/search", response_model=List[Employee])
+async def search_employees(skill: str = Query(..., description="Skill to search in employees")):
+    return await search_employees_by_skill(skill)
+
+@router.get("/avg-salary")
+async def avg_salary_by_department():
+    return await get_avg_salary_by_department()

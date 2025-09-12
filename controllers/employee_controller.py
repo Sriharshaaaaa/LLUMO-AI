@@ -1,6 +1,7 @@
 from fastapi import HTTPException
 from models import Employee
 from db import employees_collection
+from typing import List
 
 async def create_employee(employee:Employee):
     e=await employees_collection.find_one({"employee_id":employee.employee_id})
@@ -43,3 +44,37 @@ async def delete_employee(employee_id:str)->dict:
     if delete_res.deleted_count==0:
         raise HTTPException(status_code=404,detail="Employee not found")
     return {"detail":"Employee deleted successfully"}
+
+async def get_employees_by_department(department:str)->List[Employee]:
+    employees_list=employees_collection.find({"department":department}).sort("joining_date",-1)
+    employees=[]
+    async for doc in employees_list:
+        doc.pop("_id",None)
+        employees.append(Employee(**doc))
+    return employees
+
+async def search_employees_by_skill(skill: str) -> List[Employee]:
+    cursor = employees_collection.find({"skills": skill})
+    employees = []
+    async for doc in cursor:
+        doc.pop("_id", None)
+        employees.append(Employee(**doc))
+    return employees
+
+async def get_avg_salary_by_department():
+    pipeline=[
+        {"$group":{
+            "_id":"$department",
+            "avg_salary":{"$avg","$salary"}
+        }},
+        {"$project":{
+            "department":"$_id",
+            "avg_salary":{"$round":["$avg_salary",2]},
+            "_id":0   
+        }}
+    ]
+    cursor=employees_collection.aggregate(pipeline)
+    results=[]
+    async for doc in cursor:
+        results.append(doc)
+    return results

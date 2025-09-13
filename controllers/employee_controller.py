@@ -1,6 +1,6 @@
 from fastapi import HTTPException
 from models import Employee
-from db import employees_collection
+from database.db import employees_collection
 from typing import List
 # basic end points
 async def create_employee(employee:Employee):

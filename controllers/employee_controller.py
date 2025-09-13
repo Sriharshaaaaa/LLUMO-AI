@@ -2,7 +2,7 @@ from fastapi import HTTPException
 from models import Employee
 from db import employees_collection
 from typing import List
-
+# basic end points
 async def create_employee(employee:Employee):
     e=await employees_collection.find_one({"employee_id":employee.employee_id})
     if e :
@@ -44,19 +44,24 @@ async def delete_employee(employee_id:str)->dict:
     if delete_res.deleted_count==0:
         raise HTTPException(status_code=404,detail="Employee not found")
     return {"detail":"Employee deleted successfully"}
-
-async def get_employees_by_department(department:str)->List[Employee]:
-    employees_list=employees_collection.find({"department":department}).sort("joining_date",-1)
+# query and aggregate related queries
+async def get_employees_by_department(department:str,limit:int =3,skip: int=0)->List[Employee]:
+    employees_list=employees_collection.find({"department":department})\
+        .sort("joining_date",-1)\
+        .skip(skip)\
+        .limit(limit)
     employees=[]
     async for doc in employees_list:
         doc.pop("_id",None)
         employees.append(Employee(**doc))
     return employees
 
-async def search_employees_by_skill(skill: str) -> List[Employee]:
-    cursor = employees_collection.find({"skills": skill})
+async def search_employees_by_skill(skill: str,limit:int =3, skip: int =0) -> List[Employee]:
+    employees_list = employees_collection.find({"skills": skill})\
+        .skip(skip)\
+        .limit(limit)
     employees = []
-    async for doc in cursor:
+    async for doc in employees_list:
         doc.pop("_id", None)
         employees.append(Employee(**doc))
     return employees

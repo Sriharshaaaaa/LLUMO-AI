@@ -6,6 +6,7 @@ from database.db_setup import create_indexes_and_validation
 from models import Employee
 from controllers.employee_controller import create_employee
 from routes.employee_router import router as employee_router
+from routes.auth_router import router as auth_router
 
 
 @asynccontextmanager
@@ -17,6 +18,7 @@ async def lifespan(app:FastAPI):
 app=FastAPI(lifespan=lifespan)
 
 app.include_router(employee_router)
+app.include_router(auth_router)
 @app.get('/')
 async def root():
     return {"message":"Welcome to Employee API"}

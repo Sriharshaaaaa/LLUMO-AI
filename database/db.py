@@ -5,3 +5,4 @@ MONGO_DETAILS="mongodb://localhost:27017/"
 client=AsyncIOMotorClient(MONGO_DETAILS)
 database=client["assessment_db"]
 employees_collection=database["employees"]
+users_collection=database["users"]

@@ -1,4 +1,4 @@
-from fastapi import HTTPException
+from fastapi import Body, HTTPException
 from models import Employee
 from database.db import employees_collection
 from typing import List
@@ -7,7 +7,7 @@ async def create_employee(employee:Employee):
     e=await employees_collection.find_one({"employee_id":employee.employee_id})
     if e :
         raise HTTPException(status_code=400,detail="employee already exits")
-    doc=employee.model_dump()
+    doc=employee.dict()
     await employees_collection.insert_one(doc)
     return employee
 
@@ -19,7 +19,7 @@ async def get_employee(employee_id:str)->Employee:
     employee.pop("_id",None)
     return Employee(**employee)
 
-async def update_employee(employee_id:str,updates:dict)->Employee:
+async def update_employee(employee_id:str,updates:dict=Body(...))->Employee:
     # if employee id is being updated
     if "employee_id" in updates and updates["employee_id"]!=employee_id:
         # check if new id already exists
@@ -67,17 +67,18 @@ async def search_employees_by_skill(skill: str,limit:int =3, skip: int =0) -> Li
     return employees
 
 async def get_avg_salary_by_department():
-    pipeline=[
-        {"$group":{
-            "_id":"$department",
-            "avg_salary":{"$avg","$salary"}
+    pipeline = [
+        {'$group': {
+            '_id': '$department',
+            'avg_salary': {'$avg': '$salary'}
         }},
-        {"$project":{
-            "department":"$_id",
-            "avg_salary":{"$round":["$avg_salary",2]},
-            "_id":0   
+        {'$project': {
+            'department': '$_id',
+            'avg_salary': {'$round': ['$avg_salary', 2]},
+            '_id': 0
         }}
     ]
+
     cursor=employees_collection.aggregate(pipeline)
     results=[]
     async for doc in cursor:

@@ -1,9 +1,19 @@
+from contextlib import asynccontextmanager
+from enum import unique
 from fastapi import FastAPI
+from db import employees_collection
 from models import Employee
 from controllers.employee_controller import create_employee
 from routes.employee_router import router as employee_router
 
 app=FastAPI()
+
+@asynccontextmanager
+async def lifespan(app:FastAPI):
+    # create indexes
+    await employees_collection.create_index("employee_id",unique=True)
+    await employees_collection.create_index("department")
+    yield
 
 app.include_router(employee_router)
 @app.get('/')

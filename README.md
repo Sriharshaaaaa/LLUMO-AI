@@ -15,14 +15,14 @@ A FastAPI-based asynchronous REST API for managing employee data, featuring Mong
 ---
 
 ## 📁 Project Structure
-├── controllers/ # Business logic for employees
-├── models.py # Pydantic models (Employee, User)
-├── routers/ # API route handlers (employees, auth)
-├── auth.py # Authentication utilities (JWT, hashing)
-├── database/ # MongoDB connection and setup (indexes, schema validation)
-├── main.py # FastAPI app entry point
-├── README.md # Project documentation (this file)
-└── requirements.txt # Dependencies
+- ├── controllers/ # Business logic for employees
+- ├── models.py # Pydantic models (Employee, User)
+- ├── routers/ # API route handlers (employees, auth)
+- ├── auth.py # Authentication utilities (JWT, hashing)
+- ├── database/ # MongoDB connection and setup (indexes, schema validation)
+- ├── main.py # FastAPI app entry point
+- ├── README.md # Project documentation (this file)
+- └── requirements.txt # Dependencies
 
 
 ---
